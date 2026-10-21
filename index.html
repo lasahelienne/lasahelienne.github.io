@@ -669,10 +669,13 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
 
   var FR_PRICES = { ts: [790, 960, 1170], bas: [960, 1125, 1335], moyen: [1250, 1500, 1790], haut: [1835, 2335, 3170] };
   function rg(n, k, warn) { return warn ? { n: n, k: k, warn: warn } : { n: n, k: k }; }
+  function grp(g, list) { return list.map(function (z) { z.g = g; return z; }); }
   var COUNTRIES = {
     mali: { n: "Mali", short: "Mali", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "bonne", src: [S.sahel, S.faz, S.ciment, S.instat],
-      regions: [rg("Bamako (district)", 1.00), rg("Périphérie de Bamako : Kati, Kalaban Coro, Baguineda", 0.97), rg("Capitale régionale : Ségou, Sikasso, Kayes, Koutiala", 1.03),
-        rg("Centre : Mopti, Sévaré, San, Djenné", 1.08), rg("Nord : Gao, Tombouctou, Kidal, Ménaka", 1.20, "Nord du Mali : prix majorés de 20 % pour le transport et la sécurité, très variables selon l'accès au chantier."), rg("Village ou zone rurale", 0.95)] },
+      regions: [grp("Bamako et environs", [rg("Bamako (district)", 1.00), rg("Périphérie de Bamako : Kati, Kalaban Coro, Baguineda", 0.97)]),
+        grp("Sud et Ouest", [rg("Région de Koulikoro : Koulikoro, Fana, Dioïla, Kolokani, Banamba", 1.00), rg("Capitale régionale : Ségou, Sikasso, Kayes, Koutiala", 1.03)]),
+        grp("Centre et Nord", [rg("Centre : Mopti, Sévaré, San, Djenné", 1.08), rg("Nord : Gao, Tombouctou, Kidal, Ménaka", 1.20, "Nord du Mali : prix majorés de 20 % pour le transport et la sécurité, très variables selon l'accès au chantier.")]),
+        grp("Zones rurales", [rg("Village ou zone rurale", 0.95)])].reduce(function (a, b) { return a.concat(b); }, []) },
     senegal: { n: "Sénégal", short: "Sénégal", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "bonne", src: [S.sn1, S.sn2],
       regions: [rg("Dakar (Almadies, Plateau, Mermoz…)", 1.27), rg("Dakar banlieue : Pikine, Rufisque, Keur Massar", 1.10), rg("Diamniadio, Lac Rose", 1.12), rg("Saly et Petite-Côte", 1.15), rg("Mbour", 1.00), rg("Thiès", 0.92),
         rg("Saint-Louis, Kaolack, Touba, Diourbel", 0.95), rg("Ziguinchor et Casamance", 1.00), rg("Tambacounda et Est", 1.02), rg("Village ou zone rurale", 0.85)] },
@@ -737,7 +740,13 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
   }
   function fillRegions() {
     var C = currentCountry();
-    $("zone").innerHTML = C.regions.map(function (z, i) { return '<option value="' + i + '">' + z.n + "</option>"; }).join("");
+    var html = "", open = null;
+    C.regions.forEach(function (z, i) {
+      if (z.g !== open) { if (open) html += "</optgroup>"; if (z.g) html += '<optgroup label="' + z.g + '">'; open = z.g || null; }
+      html += '<option value="' + i + '">' + z.n + "</option>";
+    });
+    if (open) html += "</optgroup>";
+    $("zone").innerHTML = html;
     CUR = CURRENCIES[C.cur];
   }
   function setCountryDefaults() {
