@@ -920,11 +920,11 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
   ];
 
   var OPTS = [
-    { id: "cloture", n: "Mur de clôture et portail", d: "Agglos, hauteur 2,2 m", on: false,
+    { id: "cloture", n: "Mur de clôture et portail", d: "Agglos, hauteur 2,2 m", on: true,
       calc: function (c) { return 4 * Math.sqrt(c.parcelle) * ({ ts: 20000, bas: 30000, moyen: 42000, haut: 65000 })[c.std]; } },
-    { id: "fosse", n: "Fosse septique et puisard", d: "Latrine améliorée en très social", on: false,
+    { id: "fosse", n: "Fosse septique et puisard", d: "Latrine améliorée en très social", on: true,
       calc: function (c) { return ({ ts: 350000, bas: 600000, moyen: 950000, haut: 1550000 })[c.std] * Math.max(1, Math.round(c.surf / 250)); } },
-    { id: "branch", n: "Branchements eau et électricité", d: "Raccordement aux réseaux publics", on: false,
+    { id: "branch", n: "Branchements eau et électricité", d: "Raccordement aux réseaux publics", on: true,
       calc: function (c) { return 450000 * (c.type === "immeuble" || c.type === "mixte" || c.type === "hotel" ? 2 : 1); } },
     { id: "forage", n: "Forage équipé", d: "Pompe et château d'eau", on: false,
       calc: function () { return 4000000; } },
