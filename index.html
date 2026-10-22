@@ -1486,7 +1486,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
   // GATE : "pdf" = e-mail exigé pour télécharger le PDF ; "all" = exigé pour voir le devis ; "none" = jamais exigé
   var GATE = "pdf";
   // LEAD_URL : adresse du script Google Apps Script qui range les contacts dans le Google Sheet de La Sahélienne
-  var LEAD_URL = "";
+  var LEAD_URL = "https://script.google.com/macros/s/AKfycbwE974HMK3q69SlXET9b3rmpKlGYBFyspYekPtEw0WJyok8nanRPxPo4jkkV42MnfSb/exec";
   function locked() { return $("resultats").classList.contains("locked"); }
   function emailOk(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
   function contactFail(id, msg) {
