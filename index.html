@@ -306,6 +306,7 @@ table.postes tfoot td.a { font-size: 14px; }
 .note { font-size: 13px; padding: 8px 12px; border-left: 3px solid var(--warn); background: var(--warn-bg); color: var(--ink); }
 .note.info { border-left-color: var(--ink-3); background: var(--paper); }
 
+.consent-note { margin: 0; padding: 0 24px 16px; font-size: 12px; line-height: 1.5; color: var(--ink-2); }
 .avis { margin: 0; padding: 10px 24px 0; font-size: 12.5px; line-height: 1.5; color: var(--ink-2, var(--ink)); font-style: italic; }
 .avis a { color: var(--accent, inherit); font-weight: 600; font-style: normal; }
 .cartouche { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; font-size: 12px; }
@@ -420,7 +421,6 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
               <input type="tel" id="telClient" placeholder="Ex. : +223 70 00 00 00" autocomplete="tel">
             </div>
           </div>
-          <label class="switch"><input type="checkbox" id="consent"><span><b>Conserver mon estimation chez La Sahélienne</b><br><span class="hint">Pour la retrouver si vous nous contactez. Vos coordonnées ne sont ni partagées ni revendues.</span></span></label>
           <p class="field-err" id="contactErr" role="alert" hidden></p>
           <div class="row2">
             <div class="field">
@@ -642,6 +642,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
         <button class="btn ghost" type="button" id="resetBtn">Tout effacer</button>
         <span class="status" id="status" role="status"></span>
       </div>
+      <p class="consent-note">En téléchargeant votre devis, vous acceptez que La Sahélienne conserve votre estimation, pour la retrouver si vous nous contactez. Vos coordonnées ne sont ni partagées ni revendues.</p>
       <div style="padding:0 24px 18px" id="recapWrap" hidden>
         <label for="recapText" class="hint">La copie automatique est bloquée ici. Sélectionnez le texte ci-dessous, puis copiez-le.</label>
         <textarea id="recapText" readonly></textarea>
@@ -1434,7 +1435,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
 
   $("pdfBtn").addEventListener("click", function () {
     var btn = this;
-    if (!checkContact(GATE !== "none")) { setStatus("Indiquez votre e-mail et cochez la case en haut de la fiche pour recevoir le PDF.", true); return; }
+    if (!checkContact(GATE !== "none")) { setStatus("Indiquez votre e-mail en haut de la fiche pour recevoir le PDF.", true); return; }
     lsConv("RpMZCLLT26UdEJ6ppdRE");
     var b64 = "";
     if (window.jspdf && window.jspdf.jsPDF) { try { b64 = buildPdf().output("datauristring").split(",")[1]; } catch (e) {} }
@@ -1505,7 +1506,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
   $("zone").addEventListener("change", function () { this.classList.remove("invalid"); });
   $("surf").addEventListener("input", function () { this.classList.remove("invalid"); });
   $("rooms").addEventListener("click", function () { if (missing().every(function (x) { return x.id !== "rooms"; })) $("rooms").classList.remove("invalid"); });
-  ["email", "consent"].forEach(function (id) { $(id).addEventListener("change", function () { $("contactErr").hidden = true; }); });
+  ["email"].forEach(function (id) { $(id).addEventListener("change", function () { $("contactErr").hidden = true; }); });
 
   // ---------- Validation et contacts ----------
   // GATE : "pdf" = e-mail exigé pour télécharger le PDF ; "all" = exigé pour voir le devis ; "none" = jamais exigé
@@ -1524,7 +1525,6 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     $("contactErr").hidden = true;
     if (need && !emailOk(em)) return contactFail("email", "Indiquez une adresse e-mail valide pour recevoir votre devis.");
     if (!need && em && !emailOk(em)) return contactFail("email", "Cette adresse e-mail n'est pas valide.");
-    if (need && !$("consent").checked) return contactFail("consent", "Cochez la case « Conserver mon estimation » pour télécharger le PDF.");
     return true;
   }
   function missing() {
@@ -1558,7 +1558,8 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
   var sent = {};
   function sendLead(action, pdf) {
     var em = $("email").value.trim();
-    if (!LEAD_URL || !emailOk(em) || !$("consent").checked) return;
+    // L'accord du client est donné par le clic sur « Télécharger le devis PDF » (phrase sous le bouton).
+    if (!LEAD_URL || action !== "pdf" || !emailOk(em)) return;
     var r = state.last, m = meta();
     var data = { action: action, nom: m.client, email: em, tel: m.tel, projet: m.projet, numero: m.numero, caracteristiques: m.carac, lieu: m.lieu, total: Math.round(r.total), devise: CUR.sym, page: location.origin + location.pathname };
     var key = JSON.stringify(data);
