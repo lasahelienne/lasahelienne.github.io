@@ -168,7 +168,7 @@ legend + * { clear: both; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 @media (max-width: 420px) { .row2 { grid-template-columns: 1fr; } }
 
-select, input[type="number"], input[type="text"] {
+select, input[type="number"], input[type="text"], input[type="email"], input[type="tel"] {
   font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--ink-3);
   border-radius: 0; padding: 9px 10px; width: 100%; min-width: 0;
 }
@@ -325,6 +325,11 @@ table.postes tfoot td.a { font-size: 14px; }
 .btn[disabled] { opacity: .5; cursor: progress; }
 .status { font-family: var(--f-mono); font-size: 12px; color: var(--ok); }
 .status.err { color: var(--warn); }
+.validate { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; padding: 16px 20px 20px; border-top: 1px solid var(--ink); }
+.field-err { margin: 8px 0 0; font-family: var(--f-mono); font-size: 12px; color: var(--warn); }
+.lock-msg { padding: 28px 24px 30px; display: grid; gap: 14px; justify-items: start; }
+.lock-msg p { margin: 0; color: var(--ink-2); max-width: 46ch; }
+.results:not(.locked) .lock-msg, .results.locked > :not(.sheet-head):not(.lock-msg) { display: none; }
 textarea#recapText { width: 100%; min-height: 180px; font: 12px var(--f-mono); color: var(--ink); background: var(--paper); border: 1px solid var(--ink-3); padding: 10px; }
 
 .hyp { padding: 22px 24px 24px; display: grid; gap: 18px; }
@@ -380,7 +385,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     <div>
       <div class="eyebrow eyebrow-one">Devis estimatif · International · en devise locale</div>
       <h1>Estimez votre projet de construction, <em>pièce par pièce</em></h1>
-      <p class="lede">Choisissez le pays et la région, puis renseignez le type de bâtiment, la surface, les étages, les pièces et le standing. Le devis se met à jour aussitôt : coût des travaux, part de l'entreprise, honoraires de La Sahélienne, fourchette de prix et paiements par étape. Vous pouvez ensuite le télécharger en PDF.</p>
+      <p class="lede">Choisissez le pays et la région, puis renseignez le type de bâtiment, la surface, les étages, les pièces et le standing. Validez, et le devis s'affiche : coût des travaux, part de l'entreprise, honoraires de La Sahélienne, fourchette de prix et paiements par étape. Vous pouvez ensuite le télécharger en PDF.</p>
     </div>
   </header>
 
@@ -395,6 +400,18 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
             <label for="client">Nom du client</label>
             <input type="text" id="client" placeholder="Ex. : M. et Mme Traoré">
           </div>
+          <div class="row2">
+            <div class="field">
+              <label for="email">Adresse e-mail</label>
+              <input type="email" id="email" placeholder="Ex. : nom@exemple.com" autocomplete="email" inputmode="email">
+            </div>
+            <div class="field">
+              <label for="telClient">WhatsApp <span class="hint">(facultatif)</span></label>
+              <input type="tel" id="telClient" placeholder="Ex. : +223 70 00 00 00" autocomplete="tel">
+            </div>
+          </div>
+          <label class="switch"><input type="checkbox" id="consent"><span><b>J'accepte que La Sahélienne me recontacte</b><br><span class="hint">Vos coordonnées servent uniquement à vous recontacter au sujet de votre projet. Elles ne sont ni vendues ni partagées. Pour les faire supprimer, écrivez-nous sur WhatsApp.</span></span></label>
+          <p class="field-err" id="contactErr" role="alert" hidden></p>
           <div class="row2">
             <div class="field">
               <label for="projet">Intitulé du projet</label>
@@ -537,12 +554,19 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
           </div>
           <label class="switch"><input type="checkbox" id="tva"><span><b id="tvaLbl">Appliquer la TVA</b><br><span class="hint">À cocher si l'entreprise et le cabinet facturent la TVA. Le taux suit le pays choisi.</span></span></label>
         </fieldset>
+        <div class="validate" id="validBlock">
+          <button class="btn" type="submit" id="validBtn">Valider et voir mon devis</button>
+        </div>
       </form>
     </section>
 
     <!-- ======== PLANCHE DE DEVIS ======== -->
-    <section class="sheet results" id="resultats" aria-labelledby="resTitle" aria-live="polite">
+    <section class="sheet results locked" id="resultats" aria-labelledby="resTitle" aria-live="polite">
       <div class="sheet-head"><h2 id="resTitle">Devis estimatif</h2><span class="ref" id="refHead">HORS TERRAIN</span></div>
+      <div class="lock-msg">
+        <p>Renseignez votre projet dans la fiche, puis validez pour afficher le devis estimatif détaillé.</p>
+        <button class="btn" type="button" id="validBtn2">Valider et voir mon devis</button>
+      </div>
 
       <div class="total-block">
         <div>
@@ -660,12 +684,12 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     <div class="faq">
       <details><summary>Combien coûte la construction d'une maison au Mali ?</summary><p>À Bamako, comptez environ 75 000 FCFA/m² pour un logement très social évolutif, 120 000 FCFA/m² en standing économique, 200 000 FCFA/m² en standing confort et 325 000 FCFA/m² en haut standing, part de l'entreprise comprise et hors terrain. En ajoutant les honoraires d'architecte, les études et les imprévus, une villa R+1 de 180 m² en standing confort revient à environ 50 millions de FCFA. Ce sont des estimations, à confirmer par des devis d'entreprises.</p></details>
       <details><summary>Quel est le prix du m² de construction à Bamako et dans les régions ?</summary><p>Le prix de base au m² varie selon le standing et le lieu : la région de Koulikoro est au niveau de Bamako, la périphérie (Kati, Kalaban Coro, Baguineda) environ 3 % moins chère, les capitales régionales (Ségou, Sikasso, Kayes, Koutiala) environ 3 % plus chères, le centre (Mopti, Sévaré, San, Djenné) environ 8 % plus cher et le nord (Gao, Tombouctou) environ 20 % plus cher à cause du transport.</p></details>
-      <details><summary>Comment obtenir un devis de construction gratuit ?</summary><p>Renseignez le type de bâtiment, la surface, le nombre d'étages, les pièces et le standing dans le simulateur ci-dessus. Le devis estimatif se calcule aussitôt, poste par poste (gros œuvre, second œuvre, réseaux, honoraires), et se télécharge en PDF. Pour un devis précis, des plans ou une visite de terrain, contactez La Sahélienne par WhatsApp ou par téléphone.</p></details>
+      <details><summary>Comment obtenir un devis de construction gratuit ?</summary><p>Renseignez le type de bâtiment, la surface, le nombre d'étages, les pièces et le standing dans le simulateur ci-dessus. Après validation, le devis estimatif se calcule, poste par poste (gros œuvre, second œuvre, réseaux, honoraires), et se télécharge en PDF. Pour un devis précis, des plans ou une visite de terrain, contactez La Sahélienne par WhatsApp ou par téléphone.</p></details>
       <details><summary>Le prix du terrain est-il compris dans l'estimation ?</summary><p>Non. L'estimation couvre la construction du bâtiment, les réseaux et extérieurs choisis (clôture, fosse septique, forage…), les honoraires et les études. L'achat du terrain, les frais de notaire et le mobilier ne sont pas compris.</p></details>
       <details><summary>Pour quels pays et quels bâtiments le simulateur fonctionne-t-il ?</summary><p>Il couvre le Mali, le Sénégal, la Côte d'Ivoire, le Burkina Faso, le Niger, la Guinée, la Mauritanie, le Bénin, le Togo, la Guinée-Bissau et la France, ainsi que d'autres zones (Maroc, Afrique centrale, Europe…). Il estime une villa, un immeuble d'habitation ou mixte, un hôtel, des commerces, des bureaux, un entrepôt, une école, un centre de santé ou un lieu de culte, du rez-de-chaussée au R+4, en monnaie locale.</p></details>
       <details><summary>Pourquoi faire appel à un architecte pour construire sa maison ?</summary><p>L'architecte conçoit les plans adaptés au terrain et au climat, monte le dossier de permis de construire, consulte les entreprises et suit le chantier pour tenir le budget. Les honoraires de La Sahélienne vont de 5 % à 8 % du coût des travaux selon le standing.</p></details>
     </div>
-    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Combien coûte la construction d'une maison au Mali ?", "acceptedAnswer": {"@type": "Answer", "text": "À Bamako, comptez environ 75 000 FCFA/m² pour un logement très social évolutif, 120 000 FCFA/m² en standing économique, 200 000 FCFA/m² en standing confort et 325 000 FCFA/m² en haut standing, part de l'entreprise comprise et hors terrain. En ajoutant les honoraires d'architecte, les études et les imprévus, une villa R+1 de 180 m² en standing confort revient à environ 50 millions de FCFA. Ce sont des estimations, à confirmer par des devis d'entreprises."}}, {"@type": "Question", "name": "Quel est le prix du m² de construction à Bamako et dans les régions ?", "acceptedAnswer": {"@type": "Answer", "text": "Le prix de base au m² varie selon le standing et le lieu : la région de Koulikoro est au niveau de Bamako, la périphérie (Kati, Kalaban Coro, Baguineda) environ 3 % moins chère, les capitales régionales (Ségou, Sikasso, Kayes, Koutiala) environ 3 % plus chères, le centre (Mopti, Sévaré, San, Djenné) environ 8 % plus cher et le nord (Gao, Tombouctou) environ 20 % plus cher à cause du transport."}}, {"@type": "Question", "name": "Comment obtenir un devis de construction gratuit ?", "acceptedAnswer": {"@type": "Answer", "text": "Renseignez le type de bâtiment, la surface, le nombre d'étages, les pièces et le standing dans le simulateur ci-dessus. Le devis estimatif se calcule aussitôt, poste par poste (gros œuvre, second œuvre, réseaux, honoraires), et se télécharge en PDF. Pour un devis précis, des plans ou une visite de terrain, contactez La Sahélienne par WhatsApp ou par téléphone."}}, {"@type": "Question", "name": "Le prix du terrain est-il compris dans l'estimation ?", "acceptedAnswer": {"@type": "Answer", "text": "Non. L'estimation couvre la construction du bâtiment, les réseaux et extérieurs choisis (clôture, fosse septique, forage…), les honoraires et les études. L'achat du terrain, les frais de notaire et le mobilier ne sont pas compris."}}, {"@type": "Question", "name": "Pour quels pays et quels bâtiments le simulateur fonctionne-t-il ?", "acceptedAnswer": {"@type": "Answer", "text": "Il couvre le Mali, le Sénégal, la Côte d'Ivoire, le Burkina Faso, le Niger, la Guinée, la Mauritanie, le Bénin, le Togo, la Guinée-Bissau et la France, ainsi que d'autres zones (Maroc, Afrique centrale, Europe…). Il estime une villa, un immeuble d'habitation ou mixte, un hôtel, des commerces, des bureaux, un entrepôt, une école, un centre de santé ou un lieu de culte, du rez-de-chaussée au R+4, en monnaie locale."}}, {"@type": "Question", "name": "Pourquoi faire appel à un architecte pour construire sa maison ?", "acceptedAnswer": {"@type": "Answer", "text": "L'architecte conçoit les plans adaptés au terrain et au climat, monte le dossier de permis de construire, consulte les entreprises et suit le chantier pour tenir le budget. Les honoraires de La Sahélienne vont de 5 % à 8 % du coût des travaux selon le standing."}}]}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Combien coûte la construction d'une maison au Mali ?", "acceptedAnswer": {"@type": "Answer", "text": "À Bamako, comptez environ 75 000 FCFA/m² pour un logement très social évolutif, 120 000 FCFA/m² en standing économique, 200 000 FCFA/m² en standing confort et 325 000 FCFA/m² en haut standing, part de l'entreprise comprise et hors terrain. En ajoutant les honoraires d'architecte, les études et les imprévus, une villa R+1 de 180 m² en standing confort revient à environ 50 millions de FCFA. Ce sont des estimations, à confirmer par des devis d'entreprises."}}, {"@type": "Question", "name": "Quel est le prix du m² de construction à Bamako et dans les régions ?", "acceptedAnswer": {"@type": "Answer", "text": "Le prix de base au m² varie selon le standing et le lieu : la région de Koulikoro est au niveau de Bamako, la périphérie (Kati, Kalaban Coro, Baguineda) environ 3 % moins chère, les capitales régionales (Ségou, Sikasso, Kayes, Koutiala) environ 3 % plus chères, le centre (Mopti, Sévaré, San, Djenné) environ 8 % plus cher et le nord (Gao, Tombouctou) environ 20 % plus cher à cause du transport."}}, {"@type": "Question", "name": "Comment obtenir un devis de construction gratuit ?", "acceptedAnswer": {"@type": "Answer", "text": "Renseignez le type de bâtiment, la surface, le nombre d'étages, les pièces et le standing dans le simulateur ci-dessus. Après validation, le devis estimatif se calcule, poste par poste (gros œuvre, second œuvre, réseaux, honoraires), et se télécharge en PDF. Pour un devis précis, des plans ou une visite de terrain, contactez La Sahélienne par WhatsApp ou par téléphone."}}, {"@type": "Question", "name": "Le prix du terrain est-il compris dans l'estimation ?", "acceptedAnswer": {"@type": "Answer", "text": "Non. L'estimation couvre la construction du bâtiment, les réseaux et extérieurs choisis (clôture, fosse septique, forage…), les honoraires et les études. L'achat du terrain, les frais de notaire et le mobilier ne sont pas compris."}}, {"@type": "Question", "name": "Pour quels pays et quels bâtiments le simulateur fonctionne-t-il ?", "acceptedAnswer": {"@type": "Answer", "text": "Il couvre le Mali, le Sénégal, la Côte d'Ivoire, le Burkina Faso, le Niger, la Guinée, la Mauritanie, le Bénin, le Togo, la Guinée-Bissau et la France, ainsi que d'autres zones (Maroc, Afrique centrale, Europe…). Il estime une villa, un immeuble d'habitation ou mixte, un hôtel, des commerces, des bureaux, un entrepôt, une école, un centre de santé ou un lieu de culte, du rez-de-chaussée au R+4, en monnaie locale."}}, {"@type": "Question", "name": "Pourquoi faire appel à un architecte pour construire sa maison ?", "acceptedAnswer": {"@type": "Answer", "text": "L'architecte conçoit les plans adaptés au terrain et au climat, monte le dossier de permis de construire, consulte les entreprises et suit le chantier pour tenir le budget. Les honoraires de La Sahélienne vont de 5 % à 8 % du coût des travaux selon le standing."}}]}</script>
   </section>
 
   <section class="sheet" aria-labelledby="contactTitle">
@@ -1104,7 +1128,8 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     $("refHead").textContent = "N° " + ($("numero").value.trim() || "—") + " · HORS TERRAIN";
 
     $("mbTotal").textContent = money(r.total);
-    $("mbSub").textContent = millions(r.low) + " à " + millions(r.high) + " · " + perM2(r.pm2Total) + " " + CUR.sym + "/m²";
+    if (locked()) { $("mbTotal").textContent = "Devis estimatif"; $("mbSub").textContent = "Validez la fiche pour voir le total"; }
+    else $("mbSub").textContent = millions(r.low) + " à " + millions(r.high) + " · " + perM2(r.pm2Total) + " " + CUR.sym + "/m²";
   }
 
   function renderNotes(r) {
@@ -1222,6 +1247,8 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     var r = state.last, R = state.rooms;
     return {
       client: $("client").value.trim(),
+      email: $("email").value.trim(),
+      tel: $("telClient").value.trim(),
       projet: $("projet").value.trim() || TYPE[r.type].n,
       numero: $("numero").value.trim(),
       date: $("cDate").textContent,
@@ -1238,6 +1265,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     L.push("DEVIS ESTIMATIF N° " + (m.numero || "-") + " · " + m.date);
     L.push("");
     if (m.client) L.push("Client : " + m.client);
+    if (m.email || m.tel) L.push("Contact : " + [m.email, m.tel].filter(Boolean).join(" · "));
     L.push("Projet : " + m.projet);
     L.push("Caractéristiques : " + m.carac);
     L.push("Lieu : " + m.lieu);
@@ -1290,12 +1318,18 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     y = 47;
     font("bold", 8); color(ACC); T("CLIENT", M, y); T("PROJET", 80, y);
     font("normal", 10.5); color(INK);
-    doc.text(doc.splitTextToSize(pdfSafe(m.client || "-"), 58), M, y + 5.5);
-    font("bold", 10.5); T(m.projet, 80, y + 5.5);
+    var cl = doc.splitTextToSize(pdfSafe(m.client || "-"), 58), coord = [];
+    doc.text(cl, M, y + 5.5);
+    if (m.email || m.tel) {
+      font("normal", 9); color(MUTE);
+      coord = doc.splitTextToSize(pdfSafe([m.email, m.tel].filter(Boolean).join(" · ")), 58);
+      doc.text(coord, M, y + 5.5 + cl.length * 4.6);
+    }
+    font("bold", 10.5); color(INK); T(m.projet, 80, y + 5.5);
     font("normal", 9); color(MUTE);
     var info = doc.splitTextToSize(pdfSafe(m.carac + ". " + m.lieu + ". Pièces : " + m.pieces + ". Extérieurs : " + (m.options.length ? m.options.join(", ") : "aucun") + "."), W - M - 80);
     doc.text(info, 80, y + 10.5);
-    y = Math.max(y + 18, y + 10.5 + info.length * 4.2) + 3;
+    y = Math.max(y + 18, y + 10.5 + info.length * 4.2, y + 5.5 + cl.length * 4.6 + coord.length * 4.2) + 3;
     hr(y, INK, 0.5);
 
     // Tableau
@@ -1382,7 +1416,9 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
 
   $("pdfBtn").addEventListener("click", function () {
     var btn = this;
+    if (!checkContact(GATE !== "none")) { setStatus("Indiquez votre e-mail et cochez la case en haut de la fiche pour télécharger le PDF.", true); return; }
     lsConv("RpMZCLLT26UdEJ6ppdRE");
+    sendLead("pdf");
     if (!window.jspdf || !window.jspdf.jsPDF) { setStatus("Le module PDF n'a pas pu se charger. Utilisez « Copier le texte ».", true); return; }
     btn.disabled = true; setStatus("Préparation du PDF…");
     downloadsP.then(function (dl) {
@@ -1442,7 +1478,49 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     update();
   });
   $("f").addEventListener("input", function (e) { if (e.target.type !== "radio" && e.target.type !== "checkbox") update(); });
-  $("f").addEventListener("submit", function (e) { e.preventDefault(); });
+  $("f").addEventListener("submit", function (e) { e.preventDefault(); validate(); });
+  $("validBtn2").addEventListener("click", validate);
+  ["email", "consent"].forEach(function (id) { $(id).addEventListener("change", function () { $("contactErr").hidden = true; }); });
+
+  // ---------- Validation et contacts ----------
+  // GATE : "pdf" = e-mail exigé pour télécharger le PDF ; "all" = exigé pour voir le devis ; "none" = jamais exigé
+  var GATE = "pdf";
+  // LEAD_URL : adresse du script Google Apps Script qui range les contacts dans le Google Sheet de La Sahélienne
+  var LEAD_URL = "";
+  function locked() { return $("resultats").classList.contains("locked"); }
+  function emailOk(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
+  function contactFail(id, msg) {
+    $("contactErr").textContent = msg; $("contactErr").hidden = false;
+    $(id).scrollIntoView({ behavior: "smooth", block: "center" }); $(id).focus({ preventScroll: true });
+    return false;
+  }
+  function checkContact(need) {
+    var em = $("email").value.trim();
+    $("contactErr").hidden = true;
+    if (need && !emailOk(em)) return contactFail("email", "Indiquez une adresse e-mail valide pour recevoir votre devis.");
+    if (!need && em && !emailOk(em)) return contactFail("email", "Cette adresse e-mail n'est pas valide.");
+    if (need && !$("consent").checked) return contactFail("consent", "Cochez la case pour accepter d'être recontacté.");
+    return true;
+  }
+  function validate() {
+    if (!checkContact(GATE === "all")) return;
+    var first = locked();
+    $("resultats").classList.remove("locked");
+    update();
+    sendLead("validation");
+    if (first) $("resultats").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  var sent = {};
+  function sendLead(action) {
+    var em = $("email").value.trim();
+    if (!LEAD_URL || !emailOk(em) || !$("consent").checked) return;
+    var r = state.last, m = meta();
+    var data = { action: action, nom: m.client, email: em, tel: m.tel, projet: m.projet, numero: m.numero, caracteristiques: m.carac, lieu: m.lieu, total: Math.round(r.total), devise: CUR.sym, page: location.origin + location.pathname };
+    var key = JSON.stringify(data);
+    if (sent[key]) return;
+    sent[key] = true;
+    try { fetch(LEAD_URL, { method: "POST", mode: "no-cors", keepalive: true, headers: { "Content-Type": "text/plain;charset=utf-8" }, body: key }); } catch (e) {}
+  }
 
   function defaultNumero() {
     var d = new Date();
