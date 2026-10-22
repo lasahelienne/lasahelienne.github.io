@@ -313,6 +313,11 @@ table.postes tfoot td.a { font-size: 14px; }
 .note { font-size: 13px; padding: 8px 12px; border-left: 3px solid var(--warn); background: var(--warn-bg); color: var(--ink); }
 .note.info { border-left-color: var(--ink-3); background: var(--paper); }
 
+.offre { margin: 0 24px 18px; padding: 14px 16px; border: 1px solid var(--accent); border-left-width: 4px; background: var(--accent-soft); display: grid; gap: 6px; }
+.offre .o-t { font-weight: 700; font-size: 15px; }
+.offre p { margin: 0; font-size: 13px; line-height: 1.5; }
+.offre .o-p { font-family: var(--f-mono); font-size: 14px; font-weight: 600; color: var(--accent); }
+.offre .btn { justify-self: start; margin-top: 4px; }
 .consent-note { margin: 0; padding: 0 24px 16px; font-size: 12px; line-height: 1.5; color: var(--ink-2); }
 .avis { margin: 0; padding: 10px 24px 0; font-size: 12.5px; line-height: 1.5; color: var(--ink-2, var(--ink)); font-style: italic; }
 .avis a { color: var(--accent, inherit); font-weight: 600; font-style: normal; }
@@ -651,6 +656,13 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
         <span class="status" id="status" role="status"></span>
       </div>
       <p class="consent-note">En téléchargeant votre devis, vous acceptez que La Sahélienne conserve votre estimation, pour la retrouver si vous nous contactez. Vos coordonnées ne sont ni partagées ni revendues.</p>
+      <aside class="offre" aria-labelledby="offreTitre">
+        <div class="o-t" id="offreTitre">Étape suivante : visite de terrain + avis d'architecte</div>
+        <p>Un architecte de La Sahélienne se déplace sur votre terrain, l'analyse (accès, orientation, voisinage, contraintes), vous conseille sur l'implantation de votre projet et vous remet un compte rendu écrit.</p>
+        <p class="o-p">À partir de 20 000 FCFA</p>
+        <p>Montant déduit de nos honoraires si vous nous confiez votre projet. Paiement par Wave, virement bancaire ou sur place.</p>
+        <a class="btn" id="visiteBtn" href="https://wa.me/22362038218?text=Bonjour%20La%20Sah%C3%A9lienne%2C%20je%20souhaite%20r%C3%A9server%20une%20visite%20de%20terrain." target="_blank" rel="noopener">Réserver une visite sur WhatsApp</a>
+      </aside>
       <div style="padding:0 24px 18px" id="recapWrap" hidden>
         <label for="recapText" class="hint">La copie automatique est bloquée ici. Sélectionnez le texte ci-dessous, puis copiez-le.</label>
         <textarea id="recapText" readonly></textarea>
