@@ -1436,7 +1436,9 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     var btn = this;
     if (!checkContact(GATE !== "none")) { setStatus("Indiquez votre e-mail et cochez la case en haut de la fiche pour recevoir le PDF.", true); return; }
     lsConv("RpMZCLLT26UdEJ6ppdRE");
-    sendLead("pdf");
+    var b64 = "";
+    if (window.jspdf && window.jspdf.jsPDF) { try { b64 = buildPdf().output("datauristring").split(",")[1]; } catch (e) {} }
+    sendLead("pdf", b64);
     if (!window.jspdf || !window.jspdf.jsPDF) { setStatus("Le module PDF n'a pas pu se charger. Utilisez « Copier le texte ».", true); return; }
     btn.disabled = true; setStatus("Préparation du PDF…");
     downloadsP.then(function (dl) {
@@ -1554,7 +1556,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     if (first) $("resultats").scrollIntoView({ behavior: "smooth", block: "start" });
   }
   var sent = {};
-  function sendLead(action) {
+  function sendLead(action, pdf) {
     var em = $("email").value.trim();
     if (!LEAD_URL || !emailOk(em) || !$("consent").checked) return;
     var r = state.last, m = meta();
@@ -1562,7 +1564,10 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     var key = JSON.stringify(data);
     if (sent[key]) return;
     sent[key] = true;
-    try { fetch(LEAD_URL, { method: "POST", mode: "no-cors", keepalive: true, headers: { "Content-Type": "text/plain;charset=utf-8" }, body: key }).catch(function () {}); } catch (e) {}
+    // Le PDF (base64) part avec la fiche pour être archivé dans le Drive de La Sahélienne.
+    // keepalive est limité à 64 Ko : on ne l'utilise que sans PDF.
+    if (pdf) data.pdf = pdf;
+    try { fetch(LEAD_URL, { method: "POST", mode: "no-cors", keepalive: !pdf, headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(data) }).catch(function () {}); } catch (e) {}
   }
 
   function defaultNumero() {
