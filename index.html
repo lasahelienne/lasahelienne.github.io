@@ -671,6 +671,8 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
             <li><b>Type</b> : villa ×1,00 ; immeuble ×0,96 ; mixte ×0,98 ; hôtel ×1,12 ; commerce ×0,88 ; bureaux ×0,97 ; entrepôt ×0,55 ; école ×0,85 ; santé ×1,15 ; lieu de culte ×1,00.</li>
             <li><b>Niveaux</b> : RDC ×1,00 ; R+1 ×1,03 ; R+2 ×1,07 ; R+3 ×1,11 ; R+4 ×1,15 (escaliers, dalles, fondations renforcées).</li>
             <li><b>Toiture en tôle</b> : environ 8 % d'économie sur le dernier niveau.</li>
+            <li><b>Pays</b> : main-d'œuvre, prix du ciment et du fer (souvent importés), distance au port et TVA locale (Mali et Sénégal 18 %, Niger 19 %, Mauritanie 16 %, France 20 %). Les pays d'Afrique de l'Ouest partent de la grille de Bamako multipliée par un coefficient ; la France, le Maroc et les autres zones ont leur propre grille, en devise locale.</li>
+            <li><b>Climat et sol</b> : en zone côtière ou humide (Dakar, Abidjan, Cotonou, Lomé), les fondations coûtent 20 à 40 % de plus ; en zone sahélienne, murs épais et protection solaire ; en Europe et en Amérique du Nord, isolation et normes thermiques expliquent des prix plusieurs fois plus élevés.</li>
             <li><b>Salles d'eau</b> : le prix inclut 1 salle d'eau par 70 m². Chaque salle d'eau en plus ou en moins est comptée selon le standing et le pays.</li>
           </ul>
         </div>
@@ -685,7 +687,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
           </ul>
         </div>
         <div>
-          <h4>Sources pour ce pays</h4>
+          <h4>Sources et repères</h4>
           <ul id="srcList"></ul>
           <p style="margin-top:8px" id="fxNote"></p>
         </div>
@@ -791,30 +793,30 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
   function rg(n, k, warn) { return warn ? { n: n, k: k, warn: warn } : { n: n, k: k }; }
   function grp(g, list) { return list.map(function (z) { z.g = g; return z; }); }
   var COUNTRIES = {
-    mali: { n: "Mali", short: "Mali", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "bonne", src: [S.sahel, S.faz, S.ciment, S.instat],
+    mali: { n: "Mali", short: "Mali", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "bonne", src: [S.sahel, S.faz, S.ci, S.tt, S.ciment, S.instat],
       regions: [grp("Bamako et environs", [rg("Bamako (district)", 1.00), rg("Périphérie de Bamako : Kati, Kalaban Coro, Baguineda", 0.97)]),
         grp("Sud et Ouest", [rg("Région de Koulikoro : Koulikoro, Fana, Dioïla, Kolokani, Banamba", 1.00), rg("Capitale régionale : Ségou, Sikasso, Kayes, Koutiala", 1.03)]),
         grp("Centre et Nord", [rg("Centre : Mopti, Sévaré, San, Djenné", 1.08), rg("Nord : Gao, Tombouctou, Kidal, Ménaka", 1.20, "Nord du Mali : prix majorés de 20 % pour le transport et la sécurité, très variables selon l'accès au chantier.")]),
         grp("Zones rurales", [rg("Village ou zone rurale", 0.95)])].reduce(function (a, b) { return a.concat(b); }, []) },
-    senegal: { n: "Sénégal", short: "Sénégal", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "bonne", src: [S.sn1, S.sn2],
+    senegal: { n: "Sénégal", short: "Sénégal", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "bonne", src: [S.sn1, S.sn2, S.ci],
       regions: [rg("Dakar (Almadies, Plateau, Mermoz…)", 1.27), rg("Dakar banlieue : Pikine, Rufisque, Keur Massar", 1.10), rg("Diamniadio, Lac Rose", 1.12), rg("Saly et Petite-Côte", 1.15), rg("Mbour", 1.00), rg("Thiès", 0.92),
         rg("Saint-Louis, Kaolack, Touba, Diourbel", 0.95), rg("Ziguinchor et Casamance", 1.00), rg("Tambacounda et Est", 1.02), rg("Village ou zone rurale", 0.85)] },
-    ci: { n: "Côte d'Ivoire", short: "Côte d'Ivoire", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "bonne", src: [S.ci],
+    ci: { n: "Côte d'Ivoire", short: "Côte d'Ivoire", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "bonne", src: [S.ci, S.sn2, S.tt],
       regions: [rg("Abidjan : Cocody, Plateau, Marcory, Riviera", 1.05), rg("Abidjan : Yopougon, Abobo, Koumassi", 0.97), rg("Périphérie : Bingerville, Songon, Anyama", 0.93), rg("Grand-Bassam, Assinie", 1.00),
         rg("Yamoussoukro, Bouaké", 0.90), rg("San-Pédro", 0.95), rg("Nord : Korhogo, Ferkessédougou", 0.93), rg("Ouest : Man, Daloa", 0.92), rg("Village ou zone rurale", 0.85)] },
-    burkina: { n: "Burkina Faso", short: "Burkina Faso", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "faible", src: [S.none, S.faz],
+    burkina: { n: "Burkina Faso", short: "Burkina Faso", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "faible", src: [S.none, S.faz, S.ci, S.tt],
       regions: [rg("Ouagadougou", 1.00), rg("Bobo-Dioulasso", 0.97), rg("Autres villes : Koudougou, Banfora, Ouahigouya", 1.00), rg("Est, Nord et Sahel", 1.15, "Est, Nord et Sahel : prix majorés de 15 % pour le transport et la sécurité."), rg("Village ou zone rurale", 0.93)] },
-    niger: { n: "Niger", short: "Niger", group: "Afrique de l'Ouest", cur: "XOF", vat: 19, conf: "faible", src: [S.none, S.ne],
+    niger: { n: "Niger", short: "Niger", group: "Afrique de l'Ouest", cur: "XOF", vat: 19, conf: "faible", src: [S.none, S.ne, S.ci, S.tt],
       regions: [rg("Niamey", 1.00), rg("Maradi, Zinder, Tahoua, Dosso", 0.97), rg("Agadez et Nord", 1.15, "Agadez et Nord : prix majorés de 15 % pour le transport et la sécurité."), rg("Village ou zone rurale", 0.90)] },
-    guinee: { n: "Guinée", short: "Guinée", group: "Afrique de l'Ouest", cur: "GNF", vat: 18, conf: "faible", src: [S.gn, S.none],
+    guinee: { n: "Guinée", short: "Guinée", group: "Afrique de l'Ouest", cur: "GNF", vat: 18, conf: "faible", src: [S.gn, S.none, S.sn2, S.tt],
       regions: [rg("Conakry", 1.15), rg("Kindia, Mamou, Boké", 1.05), rg("Labé et Moyenne-Guinée", 1.08), rg("Kankan et Haute-Guinée", 1.08), rg("N'Zérékoré et Guinée forestière", 1.12), rg("Village ou zone rurale", 0.95)] },
-    mauritanie: { n: "Mauritanie", short: "Mauritanie", group: "Afrique de l'Ouest", cur: "MRU", vat: 16, conf: "faible", src: [S.none],
+    mauritanie: { n: "Mauritanie", short: "Mauritanie", group: "Afrique de l'Ouest", cur: "MRU", vat: 16, conf: "faible", src: [S.none, S.sn1, S.tt],
       regions: [rg("Nouakchott", 1.10), rg("Nouadhibou", 1.15), rg("Rosso, Kaédi, Kiffa", 1.10), rg("Zouérate, Néma, Atar (zones isolées)", 1.25), rg("Village ou zone rurale", 1.00)] },
-    benin: { n: "Bénin", short: "Bénin", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "moyenne", src: [S.bj],
+    benin: { n: "Bénin", short: "Bénin", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "moyenne", src: [S.bj, S.tg, S.tt],
       regions: [rg("Cotonou", 0.88), rg("Abomey-Calavi, Godomey", 0.83), rg("Porto-Novo", 0.83), rg("Parakou et Centre", 0.85), rg("Nord : Natitingou, Kandi, Djougou", 0.92), rg("Village ou zone rurale", 0.78)] },
-    togo: { n: "Togo", short: "Togo", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "moyenne", src: [S.tg],
+    togo: { n: "Togo", short: "Togo", group: "Afrique de l'Ouest", cur: "XOF", vat: 18, conf: "moyenne", src: [S.tg, S.bj, S.tt],
       regions: [rg("Lomé", 1.00), rg("Périphérie de Lomé : Agoè, Baguida", 0.95), rg("Kara, Sokodé", 0.95), rg("Atakpamé, Kpalimé", 0.95), rg("Dapaong et Savanes", 1.00), rg("Village ou zone rurale", 0.88)] },
-    bissau: { n: "Guinée-Bissau", short: "Guinée-Bissau", group: "Afrique de l'Ouest", cur: "XOF", vat: 15, conf: "faible", src: [S.none],
+    bissau: { n: "Guinée-Bissau", short: "Guinée-Bissau", group: "Afrique de l'Ouest", cur: "XOF", vat: 15, conf: "faible", src: [S.none, S.sn2, S.tt],
       regions: [rg("Bissau", 1.05), rg("Autres villes : Bafatá, Gabú", 1.00), rg("Îles Bijagós", 1.20), rg("Village ou zone rurale", 0.92)] },
     france: { n: "France", short: "France", group: "Europe", cur: "EUR", vat: 20, vatOn: true, conf: "bonne", prices: FR_PRICES, src: [S.fr1, S.fr2],
       regions: [rg("Paris et petite couronne", 1.25), rg("Île-de-France (grande couronne)", 0.98), rg("Provence-Alpes-Côte d'Azur", 1.13), rg("Auvergne-Rhône-Alpes", 1.09), rg("Bretagne", 1.06),
