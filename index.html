@@ -306,6 +306,8 @@ table.postes tfoot td.a { font-size: 14px; }
 .note { font-size: 13px; padding: 8px 12px; border-left: 3px solid var(--warn); background: var(--warn-bg); color: var(--ink); }
 .note.info { border-left-color: var(--ink-3); background: var(--paper); }
 
+.avis { margin: 0; padding: 10px 24px 0; font-size: 12.5px; line-height: 1.5; color: var(--ink-2, var(--ink)); font-style: italic; }
+.avis a { color: var(--accent, inherit); font-weight: 600; font-style: normal; }
 .cartouche { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; font-size: 12px; }
 @media (max-width: 640px) { .cartouche { grid-template-columns: 1fr 1fr; } }
 .cartouche > div { padding: 8px 12px 9px; border-right: 1px solid var(--ink); min-width: 0; }
@@ -633,6 +635,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
         <div><div class="k">Standing</div><div class="v" id="cStd"></div></div>
         <div><div class="k">Date</div><div class="v" id="cDate"></div></div>
       </div>
+      <p class="avis">Ce devis est une estimation sommaire, calculée à partir de prix moyens. Pour un devis réel, adapté à votre terrain et à vos attentes, faites appel à un cabinet d'architecture : La Sahélienne est là pour ça. <a href="#contactTitle">Contactez-nous</a>.</p>
       <div class="actions">
         <button class="btn" type="button" id="pdfBtn">Télécharger le devis PDF</button>
         <button class="btn ghost" type="button" id="copyBtn">Copier le texte</button>
@@ -718,7 +721,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
 
   <footer>
     <span>La Sahélienne · Architecture, Design et Infographie</span>
-    <span>Estimation indicative, à confirmer par des devis d'entreprises</span>
+    <span>Devis estimatif sommaire · pour un devis réel, contactez La Sahélienne</span>
   </footer>
 </div>
 
@@ -1299,6 +1302,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     PHASES.forEach(function (p, i) { L.push("  " + (i + 1) + ". " + p.n + " (" + Math.round(p.p * 100) + " %) : " + fcfa(r.total * p.p)); });
     L.push("");
     L.push("Hors terrain, frais fonciers et mobilier. Montants en " + CUR.long + ". Estimation indicative, valable 30 jours.");
+    L.push("Devis estimatif sommaire. Pour un devis réel, adapté à votre terrain et à vos attentes : La Sahélienne, +223 62 03 82 18 (appel ou WhatsApp).");
     return L.join("\n");
   }
 
@@ -1394,10 +1398,12 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     hr(y, RULE); y += 5;
     font("normal", 7.8); color(MUTE);
     var notes = [
-      "Estimation établie à partir des prix moyens de construction 2025-2026 pour " + r.C.short + " (" + r.Z.n + "), ajustés selon le type de bâtiment, le nombre de niveaux et le standing. Précision : environ 20 % en plus ou en moins. Non compris : terrain, frais fonciers et de notaire, mobilier, électroménager. " + (r.tvaOn ? "TVA de " + String(r.C.vat).replace(".", ",") + " % incluse." : "Montants hors TVA."),
-      "Ce devis estimatif sera confirmé par le dossier d'exécution et les devis détaillés des entreprises."
+      "Estimation établie à partir des prix moyens de construction 2025-2026 pour " + r.C.short + " (" + r.Z.n + "), ajustés selon le type de bâtiment, le nombre de niveaux et le standing. Précision : environ 20 % en plus ou en moins. Non compris : terrain, frais fonciers et de notaire, mobilier, électroménager. " + (r.tvaOn ? "TVA de " + String(r.C.vat).replace(".", ",") + " % incluse." : "Montants hors TVA.")
     ];
     notes.forEach(function (n) { var t = doc.splitTextToSize(pdfSafe(n), W - 2 * M); doc.text(t, M, y); y += t.length * 3.4 + 1; });
+    font("bold", 8); color(ACC);
+    var avis = doc.splitTextToSize(pdfSafe("Ce document est un devis estimatif sommaire. Pour un devis réel, adapté à votre terrain et à vos attentes, faites appel à un cabinet d'architecture : La Sahélienne est là pour ça. Contactez-nous au +223 62 03 82 18 (appel ou WhatsApp)."), W - 2 * M);
+    doc.text(avis, M, y + 1); y += avis.length * 3.6 + 2;
 
     // Signatures
     var sy = y + 4;
