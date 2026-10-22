@@ -1405,14 +1405,12 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     var avis = doc.splitTextToSize(pdfSafe("Ce document est un devis estimatif sommaire. Pour un devis réel, adapté à votre terrain et à vos attentes, faites appel à un cabinet d'architecture : La Sahélienne est là pour ça. Contactez-nous au +223 62 03 82 18 (appel ou WhatsApp)."), W - 2 * M);
     doc.text(avis, M, y + 1); y += avis.length * 3.6 + 2;
 
-    // Signatures
-    var sy = y + 4;
-    if (sy > 268) { doc.addPage(); sy = 30; }
-    font("bold", 8); color(INK);
-    T("LE CLIENT", M, sy); T("POUR LA SAHÉLIENNE", W / 2 + 5, sy);
-    font("normal", 7.5); color(MUTE); T("Bon pour accord, date et signature", M, sy + 4); T("Cachet et signature", W / 2 + 5, sy + 4);
-    doc.setDrawColor(RULE[0], RULE[1], RULE[2]); doc.setLineWidth(0.3);
-    doc.rect(M, sy + 6, W / 2 - M - 5, 13); doc.rect(W / 2 + 5, sy + 6, W / 2 - M - 5, 13);
+    // Signature La Sahélienne (version publique : pas de case à signer)
+    var sy = y + 5;
+    if (sy > 278) { doc.addPage(); sy = 30; }
+    font("normal", 7.5); color(MUTE); T("Établi par", W - M, sy, { align: "right" });
+    font("bold", 10); color(INK); T("La Sahélienne", W - M, sy + 4.6, { align: "right" });
+    font("normal", 7.5); color(MUTE); T("Architecture, Design & Infographie", W - M, sy + 8.6, { align: "right" });
 
     var pages = doc.getNumberOfPages();
     for (var p = 1; p <= pages; p++) {
