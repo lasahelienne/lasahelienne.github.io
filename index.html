@@ -410,7 +410,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
               <input type="tel" id="telClient" placeholder="Ex. : +223 70 00 00 00" autocomplete="tel">
             </div>
           </div>
-          <label class="switch"><input type="checkbox" id="consent"><span><b>J'accepte que La Sahélienne me recontacte</b><br><span class="hint">Vos coordonnées servent uniquement à vous recontacter au sujet de votre projet. Elles ne sont ni vendues ni partagées. Pour les faire supprimer, écrivez-nous sur WhatsApp.</span></span></label>
+          <label class="switch"><input type="checkbox" id="consent"><span><b>Recevoir mon devis et quelques conseils de La Sahélienne</b><br><span class="hint">Pas de démarchage, aucune revente de vos données. Désinscription en un message.</span></span></label>
           <p class="field-err" id="contactErr" role="alert" hidden></p>
           <div class="row2">
             <div class="field">
@@ -1322,7 +1322,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     doc.text(cl, M, y + 5.5);
     if (m.email || m.tel) {
       font("normal", 9); color(MUTE);
-      coord = doc.splitTextToSize(pdfSafe([m.email, m.tel].filter(Boolean).join(" · ")), 58);
+      coord = [m.email, m.tel].filter(Boolean).reduce(function (a, v) { return a.concat(doc.splitTextToSize(pdfSafe(v), 58)); }, []);
       doc.text(coord, M, y + 5.5 + cl.length * 4.6);
     }
     font("bold", 10.5); color(INK); T(m.projet, 80, y + 5.5);
@@ -1416,7 +1416,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
 
   $("pdfBtn").addEventListener("click", function () {
     var btn = this;
-    if (!checkContact(GATE !== "none")) { setStatus("Indiquez votre e-mail et cochez la case en haut de la fiche pour télécharger le PDF.", true); return; }
+    if (!checkContact(GATE !== "none")) { setStatus("Indiquez votre e-mail et cochez la case en haut de la fiche pour recevoir le PDF.", true); return; }
     lsConv("RpMZCLLT26UdEJ6ppdRE");
     sendLead("pdf");
     if (!window.jspdf || !window.jspdf.jsPDF) { setStatus("Le module PDF n'a pas pu se charger. Utilisez « Copier le texte ».", true); return; }
@@ -1499,7 +1499,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     $("contactErr").hidden = true;
     if (need && !emailOk(em)) return contactFail("email", "Indiquez une adresse e-mail valide pour recevoir votre devis.");
     if (!need && em && !emailOk(em)) return contactFail("email", "Cette adresse e-mail n'est pas valide.");
-    if (need && !$("consent").checked) return contactFail("consent", "Cochez la case pour accepter d'être recontacté.");
+    if (need && !$("consent").checked) return contactFail("consent", "Cochez la case pour recevoir votre devis PDF.");
     return true;
   }
   function validate() {
@@ -1519,7 +1519,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     var key = JSON.stringify(data);
     if (sent[key]) return;
     sent[key] = true;
-    try { fetch(LEAD_URL, { method: "POST", mode: "no-cors", keepalive: true, headers: { "Content-Type": "text/plain;charset=utf-8" }, body: key }); } catch (e) {}
+    try { fetch(LEAD_URL, { method: "POST", mode: "no-cors", keepalive: true, headers: { "Content-Type": "text/plain;charset=utf-8" }, body: key }).catch(function () {}); } catch (e) {}
   }
 
   function defaultNumero() {
