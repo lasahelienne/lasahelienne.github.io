@@ -327,6 +327,8 @@ table.postes tfoot td.a { font-size: 14px; }
 .status.err { color: var(--warn); }
 .validate { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; padding: 16px 20px 20px; border-top: 1px solid var(--ink); }
 .field-err { margin: 8px 0 0; font-family: var(--f-mono); font-size: 12px; color: var(--warn); }
+.invalid, .rooms.invalid { outline: 2px solid var(--warn); outline-offset: 2px; }
+.lock-msg ul { margin: 0; padding-left: 18px; color: var(--ink-2); }
 .lock-msg { padding: 28px 24px 30px; display: grid; gap: 14px; justify-items: start; }
 .lock-msg p { margin: 0; color: var(--ink-2); max-width: 46ch; }
 .results:not(.locked) .lock-msg, .results.locked > :not(.sheet-head):not(.lock-msg) { display: none; }
@@ -488,15 +490,15 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
           <legend>03 · Gabarit</legend>
           <div class="field">
             <div class="lbl"><label for="surf">Surface construite totale</label><span class="hint">tous niveaux, murs compris</span></div>
-            <div class="surface-read"><input id="surf" type="number" min="30" max="5000" step="5" value="180" inputmode="numeric"><span>m²</span></div>
-            <input id="surfRange" type="range" min="30" max="1500" step="5" value="180" aria-label="Surface construite totale (curseur)">
+            <div class="surface-read"><input id="surf" type="number" min="30" max="5000" step="5" value="" placeholder="0" inputmode="numeric"><span>m²</span></div>
+            <input id="surfRange" type="range" min="30" max="1500" step="5" value="30" aria-label="Surface construite totale (curseur)">
             <div class="ruler"><span>30</span><span>400</span><span>800</span><span>1 200</span><span>1 500 m²</span></div>
           </div>
           <div class="field">
             <span class="lbl">Nombre de niveaux <span class="hint" id="empriseHint"></span></span>
             <div class="seg" role="radiogroup" aria-label="Nombre de niveaux">
-              <input type="radio" name="niv" id="niv1" value="1"><label for="niv1">RDC<small>plain-pied</small></label>
-              <input type="radio" name="niv" id="niv2" value="2" checked><label for="niv2">R+1<small>2 niv.</small></label>
+              <input type="radio" name="niv" id="niv1" value="1" checked><label for="niv1">RDC<small>plain-pied</small></label>
+              <input type="radio" name="niv" id="niv2" value="2"><label for="niv2">R+1<small>2 niv.</small></label>
               <input type="radio" name="niv" id="niv3" value="3"><label for="niv3">R+2<small>3 niv.</small></label>
               <input type="radio" name="niv" id="niv4" value="4"><label for="niv4">R+3<small>4 niv.</small></label>
               <input type="radio" name="niv" id="niv5" value="5"><label for="niv5">R+4<small>5 niv.</small></label>
@@ -556,6 +558,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
         </fieldset>
         <div class="validate" id="validBlock">
           <button class="btn" type="submit" id="validBtn">Valider et voir mon devis</button>
+          <p class="field-err" id="formErr" role="alert" hidden></p>
         </div>
       </form>
     </section>
@@ -564,7 +567,9 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     <section class="sheet results locked" id="resultats" aria-labelledby="resTitle" aria-live="polite">
       <div class="sheet-head"><h2 id="resTitle">Devis estimatif</h2><span class="ref" id="refHead">HORS TERRAIN</span></div>
       <div class="lock-msg">
-        <p>Renseignez votre projet dans la fiche, puis validez pour afficher le devis estimatif détaillé.</p>
+        <p>Renseignez votre projet dans la fiche, puis validez pour afficher le devis estimatif détaillé. Il faut au minimum :</p>
+        <ul id="needList"><li>la région ou la ville du terrain ;</li><li>la surface construite ;</li><li>au moins une pièce.</li></ul>
+        <p class="field-err" id="formErr2" role="alert" hidden></p>
         <button class="btn" type="button" id="validBtn2">Valider et voir mon devis</button>
       </div>
 
@@ -625,7 +630,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
       <div class="actions">
         <button class="btn" type="button" id="pdfBtn">Télécharger le devis PDF</button>
         <button class="btn ghost" type="button" id="copyBtn">Copier le texte</button>
-        <button class="btn ghost" type="button" id="resetBtn">Revenir à l'exemple</button>
+        <button class="btn ghost" type="button" id="resetBtn">Tout effacer</button>
         <span class="status" id="status" role="status"></span>
       </div>
       <div style="padding:0 24px 18px" id="recapWrap" hidden>
@@ -852,7 +857,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
       html += '<option value="' + i + '">' + z.n + "</option>";
     });
     if (open) html += "</optgroup>";
-    $("zone").innerHTML = html;
+    $("zone").innerHTML = '<option value="" selected disabled>À choisir</option>' + html;
     CUR = CURRENCIES[C.cur];
   }
   function setCountryDefaults() {
@@ -900,20 +905,20 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
   var ETUDE_SOL = 750000;
 
   var ROOMS = [
-    { id: "ch",  n: "Chambres",              v: 4, min: 0, max: 60 },
-    { id: "sal", n: "Salons / séjours",      v: 1, min: 0, max: 20 },
-    { id: "sde", n: "Salles d'eau",          v: 3, min: 0, max: 60 },
-    { id: "cui", n: "Cuisines",              v: 1, min: 0, max: 20 },
-    { id: "mag", n: "Bureaux, boutiques, magasins", v: 1, min: 0, max: 60 },
-    { id: "wc",  n: "Toilettes visiteurs",   v: 1, min: 0, max: 30 }
+    { id: "ch",  n: "Chambres",              v: 0, min: 0, max: 60 },
+    { id: "sal", n: "Salons / séjours",      v: 0, min: 0, max: 20 },
+    { id: "sde", n: "Salles d'eau",          v: 0, min: 0, max: 60 },
+    { id: "cui", n: "Cuisines",              v: 0, min: 0, max: 20 },
+    { id: "mag", n: "Bureaux, boutiques, magasins", v: 0, min: 0, max: 60 },
+    { id: "wc",  n: "Toilettes visiteurs",   v: 0, min: 0, max: 30 }
   ];
 
   var OPTS = [
-    { id: "cloture", n: "Mur de clôture et portail", d: "Agglos, hauteur 2,2 m", on: true,
+    { id: "cloture", n: "Mur de clôture et portail", d: "Agglos, hauteur 2,2 m", on: false,
       calc: function (c) { return 4 * Math.sqrt(c.parcelle) * ({ ts: 20000, bas: 30000, moyen: 42000, haut: 65000 })[c.std]; } },
-    { id: "fosse", n: "Fosse septique et puisard", d: "Latrine améliorée en très social", on: true,
+    { id: "fosse", n: "Fosse septique et puisard", d: "Latrine améliorée en très social", on: false,
       calc: function (c) { return ({ ts: 350000, bas: 600000, moyen: 950000, haut: 1550000 })[c.std] * Math.max(1, Math.round(c.surf / 250)); } },
-    { id: "branch", n: "Branchements eau et électricité", d: "Raccordement aux réseaux publics", on: true,
+    { id: "branch", n: "Branchements eau et électricité", d: "Raccordement aux réseaux publics", on: false,
       calc: function (c) { return 450000 * (c.type === "immeuble" || c.type === "mixte" || c.type === "hotel" ? 2 : 1); } },
     { id: "forage", n: "Forage équipé", d: "Pompe et château d'eau", on: false,
       calc: function () { return 4000000; } },
@@ -1095,6 +1100,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
   function update() {
     var r = compute();
     state.last = r;
+    if (!locked() && missing().length) $("resultats").classList.add("locked");
 
     $("tTotal").textContent = millions(r.total); $("tCur").textContent = CUR.sym;
     $("totalLabel").textContent = r.tvaOn ? "Coût total du projet TTC" : "Coût total du projet (hors TVA)";
@@ -1452,12 +1458,14 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
 
   // ---------- Événements ----------
   function syncSurf(from) {
+    $("surf").classList.remove("invalid");
     if (from === "range") $("surf").value = $("surfRange").value;
     else $("surfRange").value = Math.min(1500, Math.max(30, Number($("surf").value) || 30));
     update();
   }
   $("surf").addEventListener("input", function () { syncSurf("num"); });
   $("surf").addEventListener("change", function () {
+    if ($("surf").value === "") { syncSurf("num"); return; }
     var v = Math.max(30, Math.min(5000, Number($("surf").value) || 30)); $("surf").value = v; syncSurf("num");
   });
   $("surfRange").addEventListener("input", function () { syncSurf("range"); });
@@ -1480,6 +1488,9 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
   $("f").addEventListener("input", function (e) { if (e.target.type !== "radio" && e.target.type !== "checkbox") update(); });
   $("f").addEventListener("submit", function (e) { e.preventDefault(); validate(); });
   $("validBtn2").addEventListener("click", validate);
+  $("zone").addEventListener("change", function () { this.classList.remove("invalid"); });
+  $("surf").addEventListener("input", function () { this.classList.remove("invalid"); });
+  $("rooms").addEventListener("click", function () { if (missing().every(function (x) { return x.id !== "rooms"; })) $("rooms").classList.remove("invalid"); });
   ["email", "consent"].forEach(function (id) { $(id).addEventListener("change", function () { $("contactErr").hidden = true; }); });
 
   // ---------- Validation et contacts ----------
@@ -1502,7 +1513,26 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     if (need && !$("consent").checked) return contactFail("consent", "Cochez la case « Conserver mon estimation » pour télécharger le PDF.");
     return true;
   }
+  function missing() {
+    var m = [], R = state.rooms;
+    if ($("zone").value === "") m.push({ id: "zone", t: "la région ou la ville du terrain" });
+    if (!(Number($("surf").value) >= 30)) m.push({ id: "surf", t: "la surface construite (30 m² au moins)" });
+    if (!(R.ch + R.sal + R.sde + R.cui + R.mag + R.wc)) m.push({ id: "rooms", t: "au moins une pièce" });
+    return m;
+  }
   function validate() {
+    var m = missing();
+    ["zone", "surf", "rooms"].forEach(function (id) { $(id).classList.remove("invalid"); });
+    if (m.length) {
+      m.forEach(function (x) { $(x.id).classList.add("invalid"); });
+      $("formErr").textContent = "Pour afficher le devis, renseignez : " + m.map(function (x) { return x.t; }).join(", ") + ".";
+      $("formErr").hidden = false;
+      $("formErr2").textContent = $("formErr").textContent; $("formErr2").hidden = false;
+      $(m[0].id).scrollIntoView({ behavior: "smooth", block: "center" });
+      if (m[0].id !== "rooms") $(m[0].id).focus({ preventScroll: true });
+      return;
+    }
+    $("formErr").hidden = true; $("formErr2").hidden = true;
     if (!checkContact(GATE === "all")) return;
     var first = locked();
     $("resultats").classList.remove("locked");
@@ -1528,13 +1558,14 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
   }
   $("resetBtn").addEventListener("click", function () {
     $("pays").value = "mali"; fillRegions(); setCountryDefaults(); $("type").value = "villa"; $("sol").value = "normal"; $("parcelle").value = "300";
-    $("surf").value = 180; $("surfRange").value = 180;
-    setRadio("niv", "2"); setRadio("toit", "dalle"); setRadio("std", "moyen");
+    $("surf").value = ""; $("surfRange").value = 30;
+    setRadio("niv", "1"); setRadio("toit", "dalle"); setRadio("std", "moyen");
     $("margeEnt").value = 15; $("honoLS").value = 8; $("bet").value = 1.5; $("imprev").value = 10; $("tva").checked = false;
     state.touched = {};
     ROOMS.forEach(function (r) { state.rooms[r.id] = r.v; $("room-" + r.id).textContent = r.v; });
     OPTS.forEach(function (o) { $("opt-" + o.id).checked = o.on; });
     $("recapWrap").hidden = true; setStatus("");
+    $("resultats").classList.add("locked");
     update();
   });
 
