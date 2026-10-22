@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lasahelienne.github.io/sitemap.xml
+Sitemap: https://devis-estimatif.lasahelienne-architecture.com/sitemap.xml
