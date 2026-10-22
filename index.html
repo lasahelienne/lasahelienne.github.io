@@ -328,7 +328,7 @@ table.postes tfoot td.a { font-size: 14px; }
 .validate { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; padding: 16px 20px 20px; border-top: 1px solid var(--ink); }
 .field-err { margin: 8px 0 0; font-family: var(--f-mono); font-size: 12px; color: var(--warn); }
 .invalid, .rooms.invalid { outline: 2px solid var(--warn); outline-offset: 2px; }
-#formErr, #formErr2 { width: 100%; max-width: none; margin: 0; padding: 12px 14px; font: 600 14px/1.5 var(--f-body); text-align: justify; hyphens: auto; color: var(--ink); background: var(--warn-bg); border-left: 4px solid var(--warn); }
+#formErr, #formErr2 { width: 100%; max-width: none; margin: 0; padding: 14px 16px; font: 600 16.5px/1.5 var(--f-body); text-align: justify; hyphens: auto; color: var(--ink); background: var(--warn-bg); border-left: 4px solid var(--warn); }
 #formErr.flash, #formErr2.flash { animation: lsFlash 1.6s ease-out; }
 @keyframes lsFlash { 0%, 30%, 60% { background: var(--warn); color: var(--sheet); } 15%, 45%, 100% { background: var(--warn-bg); color: var(--ink); } }
 @media (prefers-reduced-motion: reduce) { #formErr.flash, #formErr2.flash { animation: none; } }
@@ -1532,7 +1532,7 @@ footer { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); displ
     ["zone", "surf", "rooms"].forEach(function (id) { $(id).classList.remove("invalid"); });
     if (m.length) {
       m.forEach(function (x) { $(x.id).classList.add("invalid"); });
-      $("formErr").textContent = "Pour afficher le devis, renseignez : " + m.map(function (x) { return x.t; }).join(", ") + ".";
+      $("formErr").textContent = "Pour afficher votre devis, complétez d'abord la fiche « Programme » : " + m.map(function (x) { return x.t; }).join(", ") + ".";
       $("formErr").hidden = false;
       $("formErr2").textContent = $("formErr").textContent; $("formErr2").hidden = false;
       ["formErr", "formErr2"].forEach(function (id) { var el = $(id); el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); });
