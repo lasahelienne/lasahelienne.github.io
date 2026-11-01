@@ -1692,5 +1692,67 @@ input[type="range"], .opt input, .switch input { accent-color: var(--step); }
 })();
 </script>
 
+<!-- Bulles d'aide « i » sur chaque étape du formulaire -->
+<style>
+fieldset { position: relative; }
+.info-btn { position: absolute; top: 16px; right: 0; width: 22px; height: 22px; padding: 0; border: 0; border-radius: 50%; background: #8c8c92; color: #fff; font: italic 700 13px/1 Georgia, "Times New Roman", serif; display: grid; place-items: center; cursor: pointer; opacity: .8; transition: opacity .15s, background .15s; z-index: 2; }
+fieldset:has(.num) > .info-btn { top: 25px; right: 20px; }
+.info-btn:hover, .info-btn[aria-expanded="true"] { opacity: 1; background: #5b5b60; }
+.info-btn:focus-visible { outline: 2px solid var(--sel, #b5532f); outline-offset: 2px; }
+.info-pop { position: absolute; left: 0; right: 0; top: 54px; z-index: 30; background: var(--sheet, #fff); color: var(--ink, #18181b); border: 1px solid var(--frame, #e2d8cc); border-radius: 12px; padding: 14px 40px 14px 16px; box-shadow: 0 14px 34px rgba(0,0,0,.2); font-family: var(--f-body, serif); font-size: 16px; line-height: 1.5; letter-spacing: 0; text-transform: none; font-weight: 500; }
+fieldset:has(.num) > .info-pop { left: 12px; right: 12px; top: 66px; }
+.info-pop[hidden] { display: none; }
+.info-pop p { margin: 0 0 8px; }
+.info-pop p:last-child { margin-bottom: 0; }
+.info-pop b { font-weight: 700; }
+.info-pop .ex { background: var(--paper, #f7f4ef); border-radius: 8px; padding: 8px 10px; }
+.info-pop .x { position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border: 0; background: transparent; color: var(--ink-2, #5b5b60); font-size: 20px; line-height: 1; cursor: pointer; border-radius: 50%; }
+.info-pop .x:hover { background: var(--rule, #ece5dc); }
+</style>
+<script>
+(function () {
+  var TEXTES = [
+    "<p><b>Qui êtes-vous ?</b> Votre nom, votre e-mail et votre numéro WhatsApp servent à établir votre devis et à vous recontacter si vous le souhaitez.</p><p>L'intitulé est le nom de votre projet, par exemple « Villa familiale ». Le numéro du devis se remplit tout seul.</p>",
+    "<p><b>Où se trouve votre terrain ?</b> Le lieu change le prix des matériaux et du transport.</p><p><b>Parcelle</b> = la taille de votre terrain, pas celle de la maison.</p><p><b>Nature du sol</b> : un sol argileux, inondable ou en pente demande des fondations plus solides, donc coûte plus cher.</p>",
+    "<p><b>Surface construite totale</b> = la surface de la maison elle-même, tous les étages additionnés, murs compris. Ce n'est <b>pas</b> la surface du terrain.</p><p class=\"ex\"><b>Exemple :</b> sur un terrain de 300 m², vous construisez une maison de 100 m² au sol, avec un étage (R+1). Surface construite totale = 100 + 100 = <b>200 m²</b>.</p><p><b>Repère indicatif :</b> on construit souvent sur la moitié à deux tiers du terrain. Sur 300 m², cela fait environ 150 à 210 m² au sol, soit 300 à 420 m² au total en R+1. Ce n'est pas une règle officielle : la mairie ou le plan d'urbanisme de votre commune fixe la limite exacte.</p><p><b>RDC</b> = rez-de-chaussée seul. <b>R+1</b> = rez-de-chaussée + 1 étage.</p>",
+    "<p><b>Le standing</b> est le niveau de finition souhaité : plus il monte, plus les matériaux et les équipements sont soignés.</p><p>Il change le prix au m², et aussi la part de l'entreprise et les honoraires. Choisissez « Moyen » si vous hésitez : c'est le confort courant.</p>",
+    "<p><b>Quelles pièces voulez-vous ?</b> Ajoutez les chambres, le salon, la cuisine, les salles d'eau, etc.</p><p>Elles se partagent la surface construite : plus il y a de pièces, plus chacune est petite. Le simulateur vous indique la surface moyenne par pièce.</p>",
+    "<p><b>Autour de la maison.</b> Cochez ce qui est prévu : clôture, fosse septique, branchements, forage, solaire, climatisation, etc.</p><p>Chaque case cochée ajoute son coût au devis. Vous pouvez la décocher à tout moment pour voir la différence.</p>",
+    "<p><b>Ces deux pourcentages sont fixés selon le standing.</b></p><p><b>Part de l'entreprise</b> : frais de l'entreprise, encadrement du chantier et bénéfice.</p><p><b>Honoraires La Sahélienne</b> : conception, plans, permis de construire et suivi de chantier.</p><p>Ils sont déjà compris dans le total du devis.</p>"
+  ];
+  var fs = document.querySelectorAll("form#f > fieldset");
+  if (!fs.length) fs = document.querySelectorAll("form fieldset");
+  var ouvert = null;
+  function fermer() {
+    if (!ouvert) return;
+    ouvert.pop.hidden = true; ouvert.btn.setAttribute("aria-expanded", "false"); ouvert = null;
+  }
+  fs.forEach(function (f, i) {
+    if (!TEXTES[i]) return;
+    var lg = f.querySelector("legend");
+    var titre = lg ? (lg.querySelector(".ttl") || lg).textContent.replace(/^\s*\d+\s*·?\s*/, "").trim() : "cette étape";
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "info-btn"; btn.textContent = "i";
+    btn.setAttribute("aria-label", "Explications : " + titre);
+    btn.setAttribute("aria-expanded", "false"); btn.setAttribute("aria-controls", "infoPop" + i);
+    var pop = document.createElement("div");
+    pop.className = "info-pop"; pop.id = "infoPop" + i; pop.hidden = true; pop.setAttribute("role", "region");
+    pop.setAttribute("aria-label", "Explications : " + titre);
+    pop.innerHTML = TEXTES[i] + '<button type="button" class="x" aria-label="Fermer">×</button>';
+    f.appendChild(btn); f.appendChild(pop);
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var etaitOuvert = ouvert && ouvert.btn === btn;
+      fermer();
+      if (!etaitOuvert) { pop.hidden = false; btn.setAttribute("aria-expanded", "true"); ouvert = { btn: btn, pop: pop }; }
+    });
+    pop.querySelector(".x").addEventListener("click", function () { fermer(); btn.focus(); });
+    pop.addEventListener("click", function (e) { e.stopPropagation(); });
+  });
+  document.addEventListener("click", fermer);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") fermer(); });
+})();
+</script>
+
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "38325c79b198448c982428db81aa5d6f"}'></script><!-- End Cloudflare Web Analytics -->
 </html>
