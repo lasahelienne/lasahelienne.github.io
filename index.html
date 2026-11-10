@@ -127,13 +127,16 @@ body {
   font-family: var(--f-body);
   font-size: 17px;
   line-height: 1.5;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 20px 96px;
+  /* Marges : les côtés gauche et droit reprennent exactement la marge du haut (--marge, 28 px). */
+  --marge: 28px;
+  margin: 0;
+  padding-left: max(var(--marge), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--marge), env(safe-area-inset-right, 0px));
+  padding-block: var(--marge) 96px;
 }
 /* Fond : planche d'architecte (plan, façade, coupe) en trait très léger */
 .bg-plan { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; color: var(--ink); opacity: var(--plan-op); pointer-events: none; }
-.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 26px; }
+.wrap { max-width: none; margin: 0 auto; display: grid; gap: 26px; }
 
 /* ---------- Bandeau ---------- */
 .brand {
