@@ -169,6 +169,8 @@ h1 {
 .field > label .hint { font-size: 14px; line-height: 1; }
 h1 em { font-family: var(--f-body); font-style: italic; color: var(--band-em); font-weight: 700; font-size: 1.16em; letter-spacing: 0; text-shadow: 0 1px 1px rgba(20,24,16,.55), 0 2px 10px rgba(20,24,16,.35); }
 .lede { color: var(--band-fg); margin: 0; font-size: 18px; line-height: 1.45; text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+/* Ordinateur : le texte d'introduction est centré sous le titre (bloc centré, lignes justifiées, dernière ligne centrée). */
+@media (min-width: 821px) { .lede { max-width: 900px; margin-inline: auto; text-align-last: center; } }
 
 /* ---------- Grille principale ---------- */
 .board { display: grid; grid-template-columns: minmax(0, 430px) minmax(0, 1fr); gap: 26px; align-items: start; }
