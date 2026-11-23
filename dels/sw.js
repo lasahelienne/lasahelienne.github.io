@@ -1,5 +1,5 @@
 // DELS : service worker (fonctionnement hors ligne). Généré par tools/build-dels.mjs
-const VERSION = "dels-20261123-99fede30";
+const VERSION = "dels-20261123-ceaa01e3";
 const ASSETS = ["./","./vendor/jspdf.umd.min.js","./fonts/inter-latin.woff2","./fonts/inter-latin-ext.woff2","./icons/icon.svg","./icons/icon-32.png","./icons/icon-192.png","./icons/icon-512.png","./icons/maskable-512.png","./icons/apple-180.png","./manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {
