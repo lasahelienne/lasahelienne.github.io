@@ -1,0 +1,50 @@
+<header class="dels-top">
+    <svg class="band-plan" aria-hidden="true" focusable="false" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><use href="#planG"/></svg>
+    <div class="dels-id">
+      <span class="dels-mark" aria-hidden="true">__LS_MARK__</span>
+      <div class="dels-name">
+        <h1>DELS</h1>
+        <p class="dels-sub">Devis Estimatif La Sahélienne</p>
+      </div>
+    </div>
+    <div class="dels-tools">
+      <span class="net" id="netPill" role="status"><i></i><span id="netTxt">En ligne</span></span>
+      <button type="button" class="tbtn" id="installBtn" hidden>Installer</button>
+      <button type="button" class="tbtn" id="newBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Nouveau</span></button>
+      <button type="button" class="tbtn strong" id="listBtn" aria-haspopup="dialog" aria-controls="delsPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg><span>Mes devis</span><b id="listCount">0</b></button>
+      <div class="themes" role="group" aria-label="Apparence">
+        <button type="button" data-theme-set="light" aria-pressed="false" title="Clair">Clair</button>
+        <button type="button" data-theme-set="auto" aria-pressed="true" title="Selon l'appareil">Auto</button>
+        <button type="button" data-theme-set="dark" aria-pressed="false" title="Sombre">Sombre</button>
+      </div>
+    </div>
+    <div class="dels-banner" id="updBanner" hidden>
+      <span>Nouvelle version disponible (prix ou fonctions mis à jour).</span>
+      <button type="button" class="tbtn strong" id="updBtn">Mettre à jour</button>
+    </div>
+    <div class="dels-banner" id="queueBanner" hidden>
+      <span id="queueTxt"></span>
+      <button type="button" class="tbtn strong" id="queueBtn">Envoyer maintenant</button>
+      <button type="button" class="tbtn" id="queueDrop">Annuler</button>
+    </div>
+  </header>
+
+  <div class="dels-panel" id="delsPanel" role="dialog" aria-modal="true" aria-labelledby="panelTitle" hidden>
+    <div class="dp-back" data-close></div>
+    <div class="dp-box">
+      <div class="dp-head">
+        <h2 id="panelTitle">Mes devis</h2>
+        <button type="button" class="dp-x" data-close aria-label="Fermer">×</button>
+      </div>
+      <p class="dp-note">Enregistrés sur cet appareil. Ils restent disponibles sans Internet.</p>
+      <input type="search" id="dpSearch" placeholder="Rechercher : client, projet, n°, lieu…" aria-label="Rechercher un devis">
+      <ul class="dp-list" id="dpList"></ul>
+      <p class="dp-empty" id="dpEmpty" hidden>Aucun devis enregistré pour l'instant. Remplissez la fiche, puis touchez « Enregistrer ».</p>
+      <div class="dp-foot">
+        <button type="button" class="tbtn" id="exportBtn">Sauvegarder tout (fichier)</button>
+        <label class="tbtn" for="importFile">Restaurer une sauvegarde</label>
+        <input type="file" id="importFile" accept=".json,application/json" hidden>
+      </div>
+      <p class="dp-note small">La sauvegarde est un fichier à garder dans votre Drive ou à envoyer sur un autre appareil pour y retrouver vos devis.</p>
+    </div>
+  </div>
