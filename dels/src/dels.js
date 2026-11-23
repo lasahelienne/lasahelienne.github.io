@@ -280,6 +280,20 @@
     }).catch(function () {});
   }
 
+  // ---------- Sous-titre calé sur la largeur de « DELS » ----------
+  function fitSub() {
+    var h = document.querySelector(".dels-name h1"), sub = document.querySelector(".dels-sub");
+    if (!h || !sub) return;
+    var rg = document.createRange(); rg.selectNodeContents(h);
+    var w = rg.getBoundingClientRect().width - parseFloat(getComputedStyle(h).letterSpacing || 0);
+    sub.style.fontSize = "20px";
+    var sw = sub.scrollWidth;
+    if (w > 0 && sw > 0) sub.style.fontSize = (20 * w / sw * 0.995).toFixed(2) + "px";
+  }
+  fitSub();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitSub);
+  window.addEventListener("resize", fitSub);
+
   // ---------- Démarrage : reprendre le brouillon ou le dernier devis ouvert ----------
   (function start() {
     var d = read(DRAFT, null), lastId = read("dels-ouvert", null), list = all();
