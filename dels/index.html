@@ -415,6 +415,11 @@ input[type="range"], .opt input, .switch input { accent-color: var(--step); }
 }
 @media (max-width: 520px) { .btn { letter-spacing: .12em; padding: 13px 16px; } table.postes { font-size: 15.5px; } table.postes td.n small { font-size: 13.5px; } .kpi .v { font-size: 22px; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+/* ---------- Nom de l'outil : DELS (même bandeau que l'appli DELS) ---------- */
+.dels-lock { display: flex; flex-direction: column; align-items: flex-start; width: max-content; margin: 0 auto 14px; }
+.dels-word { font: 800 52px/.95 "Inter", system-ui, sans-serif; letter-spacing: .4em; margin-right: -.4em; color: #B4532A; text-shadow: 0 1px 1px rgba(20,24,16,.35); }
+.dels-tag { font: 500 13px/1.2 "Inter", system-ui, sans-serif; letter-spacing: 0; white-space: nowrap; color: #DCC9B3; margin-top: 7px; }
+@media (max-width: 820px) { .dels-word { font-size: 44px; } }
 </style>
 <style>
 /* ================= DELS : appli personnelle La Sahélienne =================
@@ -936,7 +941,7 @@ footer { font-size: 12px; }
 
   <footer>
     <span>DELS · Devis Estimatif La Sahélienne</span>
-    <span>Version 20261123-a732ae54 · fonctionne sans Internet</span>
+    <span>Version 20261123-28910e82 · fonctionne sans Internet</span>
   </footer>
 </div>
 
@@ -2162,6 +2167,24 @@ fieldset:has(.num) > .info-pop { left: 12px; right: 12px; top: 66px; }
   });
   document.addEventListener("click", fermer);
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") fermer(); });
+})();
+</script>
+
+<script>
+// Le sous-titre « Devis Estimatif La Sahélienne » tient exactement sous « DELS »
+(function () {
+  function fit() {
+    document.querySelectorAll(".dels-lock").forEach(function (b) {
+      var w = b.querySelector(".dels-word"), t = b.querySelector(".dels-tag"); if (!w || !t) return;
+      var r = document.createRange(); r.selectNodeContents(w);
+      var width = r.getBoundingClientRect().width - parseFloat(getComputedStyle(w).letterSpacing || 0);
+      t.style.fontSize = "20px"; var tw = t.scrollWidth;
+      if (width > 0 && tw > 0) t.style.fontSize = (20 * width / tw * 0.995).toFixed(2) + "px";
+    });
+  }
+  fit();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  window.addEventListener("resize", fit);
 })();
 </script>
 
