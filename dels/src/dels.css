@@ -1,0 +1,156 @@
+
+/* ================= DELS : appli personnelle La Sahélienne =================
+   Palette de la charte (terracotta #B4532A, vert Sahel #202F27, crème #F7F1E8,
+   sable #DCC9B3, lin #E8E0D6, encre #2B2420, nuit #2A2A2A), Inter partout. */
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 400 700; font-display: swap; src: url(./fonts/inter-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 400 700; font-display: swap; src: url(./fonts/inter-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+:root {
+  --paper: #F7F1E8; --sheet: #ffffff; --ink: #2B2420; --ink-2: #5c5048; --ink-3: #7a6d63;
+  --rule: #EFE8DE; --frame: #E8E0D6; --plan-op: .05;
+  --accent: #B4532A; --accent-soft: #F6E7DE;
+  --cta: #B4532A; --cta-hover: #9A4523;
+  --sel: #B4532A; --sel-soft: rgba(180,83,42,.12);
+  --step: #202F27; --step-soft: rgba(32,47,39,.10);
+  --band-bg: #202F27; --band-hi: #2C3F35; --band-fg: #F7F1E8; --band-mute: #DCC9B3; --band-em: #E68858;
+  --ok: #4f6640; --warn: #8a5a10; --warn-bg: #F8EBD3;
+  --shadow: 0 1px 2px rgba(43,36,32,.04), 0 10px 28px rgba(43,36,32,.06);
+  --seg-1: #202F27; --seg-2: #3B2012; --seg-3: #6B7F5A; --seg-4: #A9B79B; --seg-5: #DCC9B3;
+  --seg-6: #B4532A; --seg-7: #E68858; --seg-8: #E3A21A; --seg-9: #8f8279; --seg-10: #cfc6bc;
+  --f-display: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-label: var(--f-display); --f-body: var(--f-display); --f-mono: var(--f-display); --f-script: var(--f-display);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #2A2A2A; --sheet: #323130; --ink: #F3EEE7; --ink-2: #C9C0B6; --ink-3: #A39A90;
+    --rule: #3E3C3A; --frame: #4A4644; --plan-op: .05;
+    --accent: #E68858; --accent-soft: #3d2b22; --cta: #C25E33; --cta-hover: #D4734A;
+    --sel: #D4734A; --sel-soft: rgba(212,115,74,.22); --step: #6B7F5A; --step-soft: rgba(107,127,90,.25);
+    --band-bg: #1a2620; --band-hi: #24352c;
+    --ok: #a9c08f; --warn: #e6b866; --warn-bg: #3a2f1e; --shadow: none;
+    --seg-1: #DCC9B3; --seg-2: #A9B79B; --seg-3: #6B7F5A; --seg-4: #46553b; --seg-5: #8c7c6a;
+    --seg-6: #D4734A; --seg-7: #E68858; --seg-8: #E3A21A; --seg-9: #8b8b90; --seg-10: #5a5a5f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #2A2A2A; --sheet: #323130; --ink: #F3EEE7; --ink-2: #C9C0B6; --ink-3: #A39A90;
+  --rule: #3E3C3A; --frame: #4A4644; --plan-op: .05;
+  --accent: #E68858; --accent-soft: #3d2b22; --cta: #C25E33; --cta-hover: #D4734A;
+  --sel: #D4734A; --sel-soft: rgba(212,115,74,.22); --step: #6B7F5A; --step-soft: rgba(107,127,90,.25);
+  --band-bg: #1a2620; --band-hi: #24352c;
+  --ok: #a9c08f; --warn: #e6b866; --warn-bg: #3a2f1e; --shadow: none;
+  --seg-1: #DCC9B3; --seg-2: #A9B79B; --seg-3: #6B7F5A; --seg-4: #46553b; --seg-5: #8c7c6a;
+  --seg-6: #D4734A; --seg-7: #E68858; --seg-8: #E3A21A; --seg-9: #8b8b90; --seg-10: #5a5a5f;
+  color-scheme: dark;
+}
+:root[data-theme="light"] { color-scheme: light; }
+
+body { font-size: 16px; line-height: 1.5; --marge: 20px; padding-top: max(var(--marge), env(safe-area-inset-top, 0px)); -webkit-tap-highlight-color: transparent; }
+@media (max-width: 700px) { body { --marge: 12px; } }
+.wrap { gap: 20px; }
+p, .hint, .lock-msg p, .avis, .hyp p, .hyp li, .note, .dp-note { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.hint { font-size: 13.5px; }
+.field > label, .lbl, legend, .sheet-head h2, .btn, .cartouche .k, table.prix th { letter-spacing: .08em; }
+.sheet-head h2 { font-size: 13px; letter-spacing: .12em; }
+.btn { letter-spacing: .06em; font-size: 12.5px; border-radius: 10px; }
+
+/* ---------- Bandeau DELS ---------- */
+.dels-top {
+  position: relative; isolation: isolate; overflow: hidden; border-radius: 18px;
+  background: radial-gradient(ellipse 80% 120% at 20% 0%, var(--band-hi), var(--band-bg)); color: var(--band-fg);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 20px;
+  padding: 16px 20px;
+}
+.dels-top .band-plan { color: #000; opacity: .18; }
+.dels-id { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.dels-mark { width: 58px; height: 58px; flex: none; display: grid; place-items: center; background: var(--band-fg); border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,.25); }
+.dels-mark svg { width: 48px; height: 48px; display: block; }
+.dels-name h1 { margin: 0; font: 800 34px/1 var(--f-display); letter-spacing: .14em; color: var(--band-fg); text-align: left; text-shadow: none; }
+.dels-sub { margin: 5px 0 0; font: 500 11px/1.2 var(--f-display); letter-spacing: .04em; color: var(--band-mute); text-align: left; }
+.dels-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.tbtn {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 8px 13px; border-radius: 10px; cursor: pointer;
+  font: 600 13px var(--f-display); color: var(--band-fg); background: rgba(247,241,232,.08); border: 1px solid rgba(247,241,232,.35);
+  transition: background .15s, border-color .15s; white-space: nowrap;
+}
+.tbtn:hover { background: rgba(247,241,232,.18); }
+.tbtn:focus-visible, .btn:focus-visible { outline: 2px solid #E68858; outline-offset: 2px; }
+.tbtn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tbtn.strong { background: #B4532A; border-color: #B4532A; color: #fff; }
+.tbtn.strong:hover { background: #9A4523; border-color: #9A4523; }
+.tbtn b { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: rgba(255,255,255,.22); display: inline-grid; place-items: center; font-size: 12px; }
+.dels-top .themes { position: static; border-color: rgba(247,241,232,.35); border-radius: 10px; background: rgba(0,0,0,.15); }
+.dels-top .themes button { font: 600 11px var(--f-display); letter-spacing: .04em; text-transform: none; padding: 0 10px; min-height: 36px; }
+.dels-top .themes button + button { border-left-color: rgba(247,241,232,.35); }
+.net { display: inline-flex; align-items: center; gap: 7px; font: 600 12px var(--f-display); color: var(--band-mute); padding: 0 4px; }
+.net i { width: 9px; height: 9px; border-radius: 50%; background: #8fbf73; box-shadow: 0 0 0 3px rgba(143,191,115,.2); }
+.net.off i { background: #E3A21A; box-shadow: 0 0 0 3px rgba(227,162,26,.22); }
+.dels-banner { flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(247,241,232,.1); border: 1px solid rgba(247,241,232,.25); font: 500 14px var(--f-display); }
+.dels-banner[hidden] { display: none; }
+.dels-banner span { flex: 1 1 220px; text-align: left; }
+@media (max-width: 700px) {
+  .dels-top { padding: 14px 14px; border-radius: 16px; }
+  .dels-mark { width: 50px; height: 50px; border-radius: 13px; } .dels-mark svg { width: 41px; height: 41px; }
+  .dels-name h1 { font-size: 30px; }
+  .dels-tools { width: 100%; }
+  .dels-tools .tbtn span { display: inline; }
+  #listBtn { margin-left: auto; }
+  .net { order: -1; width: 100%; padding: 0; }
+  .dels-top .themes { order: 5; }
+}
+
+/* ---------- Panneau « Mes devis » ---------- */
+.dels-panel { position: fixed; inset: 0; z-index: 60; display: flex; justify-content: flex-end; }
+.dels-panel[hidden] { display: none; }
+.dp-back { position: absolute; inset: 0; background: rgba(20,24,20,.45); backdrop-filter: blur(2px); animation: dpFade .18s ease-out; }
+.dp-box {
+  position: relative; width: min(520px, 100%); height: 100%; background: var(--paper); color: var(--ink); overflow-y: auto; overscroll-behavior: contain;
+  padding: max(18px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 12px;
+  box-shadow: -10px 0 40px rgba(0,0,0,.2); animation: dpSlide .22s ease-out;
+}
+@keyframes dpFade { from { opacity: 0; } }
+@keyframes dpSlide { from { transform: translateX(30px); opacity: .4; } }
+.dp-head { display: flex; align-items: center; justify-content: space-between; }
+.dp-head h2 { margin: 0; font: 700 22px var(--f-display); }
+.dp-x { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--frame); background: var(--sheet); color: var(--ink); font-size: 24px; line-height: 1; cursor: pointer; }
+.dp-note { margin: 0; font-size: 14px; color: var(--ink-2); }
+.dp-note.small { font-size: 12.5px; }
+#dpSearch { width: 100%; font: 500 15px var(--f-display); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--frame); background: var(--sheet); color: var(--ink); }
+.dp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.dp-item { background: var(--sheet); border: 1px solid var(--frame); border-radius: 14px; padding: 12px 14px; display: grid; gap: 6px; }
+.dp-item.cur { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.dp-top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.dp-client { font-weight: 700; font-size: 15.5px; overflow-wrap: anywhere; }
+.dp-total { font-weight: 700; font-size: 15px; color: var(--accent); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.dp-meta { font-size: 13px; color: var(--ink-2); overflow-wrap: anywhere; }
+.dp-acts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+.dp-acts button { font: 600 12.5px var(--f-display); padding: 7px 11px; border-radius: 8px; border: 1px solid var(--frame); background: transparent; color: var(--ink); cursor: pointer; min-height: 34px; }
+.dp-acts button.open { background: var(--accent); border-color: var(--accent); color: #fff; }
+.dp-acts button.del { color: var(--sel); margin-left: auto; }
+.dp-acts button.del.sure { background: var(--sel); border-color: var(--sel); color: #fff; }
+.dp-empty { color: var(--ink-2); font-size: 14.5px; }
+.dp-foot { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 8px; border-top: 1px solid var(--frame); }
+.dp-foot .tbtn { color: var(--ink); background: var(--sheet); border-color: var(--frame); }
+.dp-foot .tbtn:hover { background: var(--rule); }
+
+/* ---------- Actions du devis ---------- */
+.actions { gap: 8px; }
+.actions .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 16px; }
+.actions .btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.actions .btn.wa2 svg { fill: currentColor; stroke: none; }
+.btn.ghost:hover { background: var(--rule); color: var(--ink); border-color: var(--ink-3); }
+#saveBtn.saved { background: var(--step); border-color: var(--step); }
+.status { font-size: 13px; flex: 1 1 100%; }
+@media (max-width: 560px) { .actions .btn { flex: 1 1 calc(50% - 8px); justify-content: center; } }
+.pct-in input { pointer-events: auto; }
+.avis { font-style: normal; font-size: 14px; }
+.cartouche .v { font-size: 14px; }
+footer { font-size: 12px; }
+.mobilebar .mb-t { font-size: 20px; }
+@media (min-width: 981px) { .mobilebar { bottom: max(18px, env(safe-area-inset-bottom)); } }
+@media (max-width: 980px) { .mobilebar { padding-bottom: max(12px, env(safe-area-inset-bottom)); } }
+.actions [hidden] { display: none !important; }
+.actions .btn { text-transform: none; letter-spacing: .01em; font-size: 14px; font-weight: 600; }
