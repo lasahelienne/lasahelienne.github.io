@@ -260,12 +260,16 @@
 
   // ---------- Installation et mises à jour ----------
   var deferred = null;
-  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); deferred = e; $("installBtn").hidden = false; });
+  function isInstalled() {
+    try { if (window.matchMedia("(display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui), (display-mode: window-controls-overlay)").matches) return true; } catch (e) {}
+    return window.navigator.standalone === true || document.referrer.indexOf("android-app://") === 0;
+  }
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); if (isInstalled()) return; deferred = e; $("installBtn").hidden = false; });
   $("installBtn").addEventListener("click", function () {
     if (!deferred) return;
     deferred.prompt(); deferred.userChoice.then(function () { deferred = null; $("installBtn").hidden = true; });
   });
-  window.addEventListener("appinstalled", function () { $("installBtn").hidden = true; });
+  window.addEventListener("appinstalled", function () { deferred = null; $("installBtn").hidden = true; });
   if ("serviceWorker" in navigator && location.protocol !== "file:") {
     var reloading = false;
     navigator.serviceWorker.addEventListener("controllerchange", function () { if (reloading) return; reloading = true; location.reload(); });

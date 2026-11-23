@@ -165,3 +165,5 @@ footer { font-size: 12px; }
 .dels-id { align-items: flex-start; gap: 16px; }
 .dels-mark { box-sizing: border-box; }
 
+/* Appli déjà installée (ouverte depuis l'écran d'accueil) : pas de bouton « Installer » */
+@media (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui), (display-mode: window-controls-overlay) { #installBtn { display: none !important; } }
