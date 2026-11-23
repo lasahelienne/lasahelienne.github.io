@@ -289,6 +289,20 @@
     sub.style.fontSize = "20px";
     var sw = sub.scrollWidth;
     if (w > 0 && sw > 0) sub.style.fontSize = (20 * w / sw * 0.995).toFixed(2) + "px";
+    // Cadre du logo : du haut des capitales de DELS jusqu'au pied du sous-titre (métriques d'Inter)
+    var mk = document.querySelector(".dels-mark"), id = document.querySelector(".dels-id");
+    if (!mk || !id) return;
+    var f1 = parseFloat(getComputedStyle(h).fontSize), lh1 = parseFloat(getComputedStyle(h).lineHeight) / f1;
+    var f2 = parseFloat(getComputedStyle(sub).fontSize), lh2 = parseFloat(getComputedStyle(sub).lineHeight) / f2;
+    var capTop = h.getBoundingClientRect().top + ((lh1 - 1.2109) / 2 + 0.96875 - 0.727) * f1;
+    var base = sub.getBoundingClientRect().top + ((lh2 - 1.2109) / 2 + 0.96875) * f2;
+    var size = Math.round(base - capTop);
+    if (size > 20) {
+      mk.style.width = mk.style.height = size + "px";
+      mk.style.marginTop = (capTop - id.getBoundingClientRect().top) + "px";
+      mk.style.borderRadius = Math.round(size * 0.22) + "px";
+      var sv = mk.querySelector("svg"); if (sv) sv.style.width = sv.style.height = Math.round(size * 0.86) + "px";
+    }
   }
   fitSub();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitSub);
