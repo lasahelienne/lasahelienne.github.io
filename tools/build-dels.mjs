@@ -88,7 +88,7 @@ if (/googletagmanager|cloudflareinsights|script\.google\.com/.test(s)) throw new
 if (/LA SAH[ÉE]LIENNE/.test(s)) throw new Error("nom en capitales");
 
 // 9. Version + service worker (liste des fichiers à garder hors ligne)
-const assets = ["vendor/jspdf.umd.min.js", "fonts/inter-latin.woff2", "fonts/inter-latin-ext.woff2", "icons/icon.svg", "icons/icon-32.png", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png", "icons/apple-180.png", "manifest.webmanifest"];
+const assets = ["vendor/jspdf.umd.min.js", "fonts/inter-latin.woff2", "fonts/inter-latin-ext.woff2", "icons/v2/icon.svg", "icons/v2/icon-32.png", "icons/v2/icon-192.png", "icons/v2/icon-512.png", "icons/v2/maskable-512.png", "icons/v2/apple-180.png", "manifest.webmanifest"];
 const h = crypto.createHash("sha256").update(s);
 for (const a of assets) h.update(fs.readFileSync(P("dels", a)));
 h.update(rd("dels/src/sw.js"));
